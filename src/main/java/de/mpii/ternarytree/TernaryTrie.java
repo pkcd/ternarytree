@@ -43,18 +43,44 @@ public class TernaryTrie {
     }
     
     /**
+     * This method returns the list of integer values associated with a key.
+     * @param key An ascii string or the key
+     * @return The list of integers associated with the key. This is empty if 
+     * the key does not exist.
+     */
+    public TIntList get(String key) {
+        Node p = root;
+        int pos = 0;
+        byte[] chars = getBytes(key);
+        while (p != null) {
+            if (chars[pos] < p.chr) {
+                p = p.left;
+            } else if(chars[pos] == p.chr) {
+                if (pos == chars.length - 1) {
+                    break;
+                } else {
+                    p = p.equal;
+                    pos++;
+                }
+            } else {
+                p = p.right;
+            }
+        }
+        if (p != null) {
+            return p.values;
+        } else {
+            return new TIntArrayList();
+        }
+    }
+    
+    /**
      * This method inserts a (key, value) pair into the data structure. This
      * does nothing when the given (key, value) pair already exists
      * @param name An ascii string or the key
      * @param entityId An integer or the value
      */
     public void insert(String key, int value) {
-        byte[] bytes = null;
-        try {
-            bytes = key.getBytes("US-ASCII");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        byte[] bytes = getBytes(key);
         root = insert(root, bytes, 0, value);
     }
     
@@ -101,5 +127,15 @@ public class TernaryTrie {
             repr = toString(p.right, repr, prefix);
         }
         return repr;
+    }
+    
+    private byte[] getBytes(String str) {
+        byte[] bytes = null;
+        try {
+            bytes = str.getBytes("US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return bytes;
     }
 }
