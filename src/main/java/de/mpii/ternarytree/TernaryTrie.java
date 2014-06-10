@@ -31,7 +31,7 @@ public class TernaryTrie {
         public String toString() {
             String repr = "";
             repr += (char)chr;
-            repr += " , {" + values.toString() + "}";
+            repr += " , " + values.toString();
             return repr;
         }
     }
@@ -96,9 +96,9 @@ public class TernaryTrie {
             if (p.values != null) {
                 repr += prefix + p.toString() + "\n";
             }
-            repr += toString(p.left, repr, prefix);
-            repr += toString(p.equal, repr, prefix + (char)p.chr);
-            repr += toString(p.left, repr, prefix);
+            repr = toString(p.left, repr, prefix);
+            repr = toString(p.equal, repr, prefix + (char)p.chr);
+            repr = toString(p.right, repr, prefix);
         }
         return repr;
     }
