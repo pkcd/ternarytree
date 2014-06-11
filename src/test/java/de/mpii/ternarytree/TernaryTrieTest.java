@@ -1,6 +1,11 @@
 package de.mpii.ternarytree;
 
 import static org.junit.Assert.*;
+import gnu.trove.iterator.TIntIterator;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -60,5 +65,34 @@ public class TernaryTrieTest{
         assertEquals("{1, 2}", tt.get("obama").toString());
         assertEquals("{2}", tt.get("zynga").toString());
         //System.out.println(tt.toString());
+    }
+    
+    @Test
+    public void testRigorous() {
+        int length = 25;
+        int num = 100;
+        TernaryTrie tt = new TernaryTrie();
+        Random r = new Random();
+        for (int j = 0; j < num; j++) {
+            String key = "";
+            for (int i = 0; i < length; i++) {
+                key += (char)(r.nextInt(26) + 'a');
+            }
+            TIntList existing = tt.get(key);
+            TIntArrayList newList = new TIntArrayList(existing);
+            int value = r.nextInt(100);
+            newList.add(value);
+            tt.insert(key, value);
+            assertEqualsList(newList , new TIntArrayList(tt.get(key)));
+        }
+        System.out.println(tt.toString());
+    }
+    
+    private void assertEqualsList(TIntList a, TIntList b) {
+        TIntIterator iter = a.iterator();
+        while (iter.hasNext()) {
+            b.remove(iter.next());
+        }
+        assertEquals(0, b.size());
     }
 }
