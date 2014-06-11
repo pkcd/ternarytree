@@ -74,26 +74,26 @@ public class TernaryTrie {
     }
     
     /**
-     * This method inserts a (key, value) pair into the data structure. This
+     * This method adds a (key, value) pair into the data structure. This
      * does nothing when the given (key, value) pair already exists
-     * @param name An ascii string or the key
-     * @param entityId An integer or the value
+     * @param key An ascii string or the key
+     * @param value An integer or the value
      */
-    public void insert(String key, int value) {
+    public void add(String key, int value) {
         byte[] bytes = getBytes(key);
-        root = insert(root, bytes, 0, value);
+        root = add(root, bytes, 0, value);
     }
     
-    private Node insert(Node p, byte[] chars, int pos, int value) {
+    private Node add(Node p, byte[] chars, int pos, int value) {
         byte chr = chars[pos];
         if (p == null) {
             p = new Node(chr);
         }
         if (chr < p.chr) {
-            p.left = insert(p.left, chars, pos, value);
+            p.left = add(p.left, chars, pos, value);
         } else if (chr == p.chr) {
             if (pos < chars.length  - 1) {
-                p.equal = insert(p.equal, chars, pos + 1, value);
+                p.equal = add(p.equal, chars, pos + 1, value);
             } else {
                 if (p.values == null) {
                     p.values = new TIntArrayList();
@@ -101,7 +101,7 @@ public class TernaryTrie {
                 p.values.add(value);
             }
         } else {
-            p.right = insert(p.right, chars, pos, value);
+            p.right = add(p.right, chars, pos, value);
         }
         return p;
     }

@@ -14,9 +14,9 @@ public class TernaryTrieTest{
     @Test
     public void testBasicInsertionAndToString1() {
         TernaryTrie tt = new TernaryTrie();
-        tt.insert("barack", 0);
-        tt.insert("barack obama", 1);
-        tt.insert("barricade", 2);
+        tt.add("barack", 0);
+        tt.add("barack obama", 1);
+        tt.add("barricade", 2);
         String expected = "barack , {0}\n"
                          +"barack obama , {1}\n"
                          +"barricade , {2}\n";
@@ -27,10 +27,10 @@ public class TernaryTrieTest{
     @Test
     public void testBasicInsertionAndToString2() {
         TernaryTrie tt = new TernaryTrie();
-        tt.insert("barack", 0);
-        tt.insert("barack obama", 1);
-        tt.insert("barack obama", 2);
-        tt.insert("barricade", 2);
+        tt.add("barack", 0);
+        tt.add("barack obama", 1);
+        tt.add("barack obama", 2);
+        tt.add("barricade", 2);
         String expected = "barack , {0}\n"
                          +"barack obama , {1, 2}\n"
                          +"barricade , {2}\n";
@@ -41,10 +41,10 @@ public class TernaryTrieTest{
     @Test
     public void testGet1() {
         TernaryTrie tt = new TernaryTrie();
-        tt.insert("barack", 0);
-        tt.insert("barack obama", 1);
-        tt.insert("barack obama", 2);
-        tt.insert("barricade", 2);
+        tt.add("barack", 0);
+        tt.add("barack obama", 1);
+        tt.add("barack obama", 2);
+        tt.add("barricade", 2);
         
         assertEquals("{1, 2}", tt.get("barack obama").toString());
         assertEquals("{0}", tt.get("barack").toString());
@@ -56,10 +56,10 @@ public class TernaryTrieTest{
     @Test
     public void testGet2() {
         TernaryTrie tt = new TernaryTrie();
-        tt.insert("barack", 0);
-        tt.insert("obama", 1);
-        tt.insert("obama", 2);
-        tt.insert("zynga", 2);
+        tt.add("barack", 0);
+        tt.add("obama", 1);
+        tt.add("obama", 2);
+        tt.add("zynga", 2);
         
         assertEquals("{0}", tt.get("barack").toString());
         assertEquals("{1, 2}", tt.get("obama").toString());
@@ -82,10 +82,10 @@ public class TernaryTrieTest{
             TIntArrayList newList = new TIntArrayList(existing);
             int value = r.nextInt(100);
             newList.add(value);
-            tt.insert(key, value);
+            tt.add(key, value);
             assertEqualsList(newList , new TIntArrayList(tt.get(key)));
         }
-        System.out.println(tt.toString());
+        //System.out.println(tt.toString());
     }
     
     private void assertEqualsList(TIntList a, TIntList b) {
