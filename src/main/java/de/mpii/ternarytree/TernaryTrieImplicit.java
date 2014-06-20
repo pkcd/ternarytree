@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
  * This class implements an in-memory ternary trie data structure. It maintains
  * a set of integers against an ascii string key.
  */
-public class TernaryTrieImplicit {
+public class TernaryTrieImplicit implements Trie{
 
     TByteArrayList tree;
     TIntObjectMap<TIntList> lists;
@@ -22,12 +22,6 @@ public class TernaryTrieImplicit {
         lists = new TIntObjectHashMap<TIntList>();
     }
     
-    /**
-     * This method returns the list of integer values associated with a key.
-     * @param key An ascii string or the key
-     * @return The list of integers associated with the key. This is empty if 
-     * the key does not exist.
-     */
     public TIntList get(String keyString) {
         byte[] chars = getBytes(keyString);
         int node = 0, pos = 0;
@@ -54,12 +48,6 @@ public class TernaryTrieImplicit {
         return l;
     }
     
-    /**
-     * This method adds a (key, value) pair into the data structure. This
-     * does nothing when the given (key, value) pair already exists
-     * @param key An ascii string or the key
-     * @param value An integer or the value
-     */
     public void add(String key, int value) {
         byte[] bytes = getBytes(key);
         add(0, bytes, 0, value);
@@ -91,11 +79,6 @@ public class TernaryTrieImplicit {
         }
     }
     
-    /**
-     * Returns a string representation of the trie. It is a sequence of lines of
-     * the form "key, values". The lines are ordered as in depth first traversal
-     * where left, equal and right childs are given decreasing priorities.
-     */
     @Override
     public String toString() {
         String repr = toString(0, "", "");
