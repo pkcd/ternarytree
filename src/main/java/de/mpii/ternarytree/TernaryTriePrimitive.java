@@ -44,19 +44,7 @@ public class TernaryTriePrimitive {
                 node = nodes.get(node + 2);
             }
         }
-        TIntList mappedValues = new TIntArrayList();
-        if (node != -1) {
-            int listNode = nodes.get(node + 3);
-            if (listNode != -1) {
-                listNode++;
-                while(listNode != -1) {
-                    mappedValues.add(values.get(listNode));
-                    listNode++;
-                    listNode = values.get(listNode);
-                }
-            }
-        }
-        return mappedValues;
+        return getValueList(node);
     }
     
     /**
@@ -99,6 +87,45 @@ public class TernaryTriePrimitive {
              nodes.set(node + 2, add(nodes.get(node + 2), chars, pos, value));
         }
         return node;
+    }
+    
+    /**
+     * Returns a string representation of the trie. It is a sequence of lines of
+     * the form "key, values". The lines are ordered as in depth first traversal
+     * where left, equal and right childs are given decreasing priorities.
+     */
+    @Override
+    public String toString() {
+        String repr = toString(root, "", "");
+        return repr;
+    }
+    
+    private String toString(int node, String repr, String prefix) {
+        if (node != -1) {
+            if (nodes.get(node + 3) != -1) {
+                repr += prefix + (char)labels.get(node/4) + " , " + getValueList(node).toString() + "\n";
+            }
+            repr = toString(nodes.get(node), repr, prefix);
+            repr = toString(nodes.get(node + 1), repr, prefix + (char)labels.get(node/4));
+            repr = toString(nodes.get(node + 2), repr, prefix);
+        }
+        return repr;
+    }
+    
+    private TIntList getValueList(int node) {
+        TIntList mappedValues = new TIntArrayList();
+        if (node != -1) {
+            int listNode = nodes.get(node + 3);
+            if (listNode != -1) {
+                listNode++;
+                while(listNode != -1) {
+                    mappedValues.add(values.get(listNode));
+                    listNode++;
+                    listNode = values.get(listNode);
+                }
+            }
+        }
+        return mappedValues;
     }
     
     private byte[] getBytes(String str) {
