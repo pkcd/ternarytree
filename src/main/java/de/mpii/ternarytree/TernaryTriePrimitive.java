@@ -7,9 +7,21 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TByteArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
+/**
+ * JH: Some general comments
+ * - please add doc-comments to public methods
+ * - please add more comments to parts of the code, e.g. the more higher-up
+ *   parts of the while/if constructs to get a quick picture of what is being done.
+ *   Even better, follow Diego's suggestion and add all the primitive methods.
+ */
 public class TernaryTriePrimitive implements Trie{
+    // JH: Why not use a char list? This way you are independent of the encoding.
     TByteList labels;
     TIntList nodes;
+    // JH: Seeing from the unit tests, you allow the same string to be inserted
+    // with the same value. I don't think this is necessary, a regular Map-style
+    // single key-value should be fine. This way, you can store the single pointer
+    // in nodes and do not need values.
     TIntList values;
     int root;
     
@@ -79,6 +91,9 @@ public class TernaryTriePrimitive implements Trie{
     
     @Override
     public String toString() {
+        // JH: It's not a good idea to have the whole trie represented in the
+        // toString method - this is also used in the debugger and should be concise,
+        // e.g.: TT (X nodes).
         String repr = toString(root, "", "");
         return repr;
     }
@@ -111,6 +126,7 @@ public class TernaryTriePrimitive implements Trie{
         return mappedValues;
     }
     
+    // JH: Just to repeat, do not use bytes, but chars.
     private byte[] getBytes(String str) {
         byte[] bytes = null;
         try {

@@ -26,6 +26,11 @@ public class TernaryTriePrimitiveTest{
     }
     
     @Test
+    public void testGet3() {
+        CommonTrieTest.testGet3(new TernaryTriePrimitive());
+    }
+    
+    @Test
     public void testRigorous() {
         CommonTrieTest.testRigorous(new TernaryTriePrimitive());
     }
