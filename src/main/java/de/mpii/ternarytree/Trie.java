@@ -29,4 +29,5 @@ public interface Trie {
      * the form "key, values".
      */
     public String getContent();
+    
 }
