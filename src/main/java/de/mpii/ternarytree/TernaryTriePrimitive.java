@@ -1,5 +1,13 @@
 package de.mpii.ternarytree;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TCharArrayList;
@@ -12,7 +20,7 @@ import gnu.trove.list.array.TIntArrayList;
  *   parts of the while/if constructs to get a quick picture of what is being done.
  *   Even better, follow Diego's suggestion and add all the primitive methods.
  */
-public class TernaryTriePrimitive implements Trie{
+public class TernaryTriePrimitive implements Trie, Serializable{
     // JH: Why not use a char list? This way you are independent of the encoding.
     TCharList labels;
     TIntList nodes;
@@ -138,5 +146,32 @@ public class TernaryTriePrimitive implements Trie{
             repr = getContent(nodes.get(node + 2), repr, prefix);
         }
         return repr;
+    }
+
+    public void serialize(OutputStream stream) throws IOException {
+        DataOutputStream writer = new DataOutputStream(
+                new BufferedOutputStream(stream));
+        writer.writeInt(nodes.size());
+        for (int i = 0; i < nodes.size(); i++) {
+            writer.writeInt(nodes.get(i));
+        }
+        writer.writeInt(labels.size());
+        for (int i = 0; i < labels.size(); i++) {
+            writer.writeChar(labels.get(i));
+        }
+    }
+
+    public void deserialize(InputStream stream) throws IOException {
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
+        nodes.clear();
+        labels.clear();
+        int numNodes = reader.readInt();
+        for (int i = 0; i < numNodes; i++) {
+            nodes.add(reader.readInt());
+        }
+        int numLabels = reader.readInt();
+        for (int i = 0; i < numLabels; i++) {
+            labels.add(reader.readChar());
+        }
     }
 }
