@@ -22,17 +22,15 @@ public class TernaryTriePrimitive implements Trie{
     // with the same value. I don't think this is necessary, a regular Map-style
     // single key-value should be fine. This way, you can store the single pointer
     // in nodes and do not need values.
-    TIntList values;
     int root;
     
     public TernaryTriePrimitive() {
         labels = new TByteArrayList();
         nodes = new TIntArrayList();
-        values = new TIntArrayList();
         root = -1;
     }
 
-    public TIntList get(String keyString) {
+    public int get(String keyString, int defaultValue) {
         int node = root;
         int pos = 0;
         byte[] chars = getBytes(keyString);
@@ -50,15 +48,19 @@ public class TernaryTriePrimitive implements Trie{
                 node = nodes.get(node + 2);
             }
         }
-        return getValueList(node);
+        if (node == -1) {
+            return defaultValue;
+        } else {
+            return nodes.get(node + 3);
+        }
     }
     
-    public void add(String key, int value) {
+    public void put(String key, int value) {
         byte[] bytes = getBytes(key);
-        root = add(root, bytes, 0, value);
+        root = put(root, bytes, 0, value);
     }
     
-    private int add(int node, byte[] chars, int pos, int value) {
+    private int put(int node, byte[] chars, int pos, int value) {
         byte chr = chars[pos];
         if (node == -1) {
             node = nodes.size();
@@ -66,25 +68,15 @@ public class TernaryTriePrimitive implements Trie{
             labels.add(chr);
         }
         if (chr < labels.get(node/4)) {
-            nodes.set(node, add(nodes.get(node), chars, pos, value));
+            nodes.set(node, put(nodes.get(node), chars, pos, value));
         } else if (chr == labels.get(node/4)) {
             if (pos < chars.length  - 1) {
-                nodes.set(node + 1, add(nodes.get(node + 1), chars, pos + 1, value));
+                nodes.set(node + 1, put(nodes.get(node + 1), chars, pos + 1, value));
             } else {
-                int list = nodes.get(node + 3);
-                if (list == -1) {
-                    list = values.size();
-                    nodes.set(node + 3, list);
-                    values.add(new int[]{list + 2, value, -1});
-                } else {
-                    int end = values.get(list);
-                    values.set(end, values.size());
-                    values.set(list, values.size() + 1);
-                    values.add(new int[]{value, -1});
-                }
+                nodes.set(node + 3, value);
             }
         } else {
-             nodes.set(node + 2, add(nodes.get(node + 2), chars, pos, value));
+             nodes.set(node + 2, put(nodes.get(node + 2), chars, pos, value));
         }
         return node;
     }
@@ -101,29 +93,13 @@ public class TernaryTriePrimitive implements Trie{
     private String toString(int node, String repr, String prefix) {
         if (node != -1) {
             if (nodes.get(node + 3) != -1) {
-                repr += prefix + (char)labels.get(node/4) + " , " + getValueList(node).toString() + "\n";
+                repr += prefix + (char)labels.get(node/4) + " , " + nodes.get(node + 3) + "\n";
             }
             repr = toString(nodes.get(node), repr, prefix);
             repr = toString(nodes.get(node + 1), repr, prefix + (char)labels.get(node/4));
             repr = toString(nodes.get(node + 2), repr, prefix);
         }
         return repr;
-    }
-    
-    private TIntList getValueList(int node) {
-        TIntList mappedValues = new TIntArrayList();
-        if (node != -1) {
-            int listNode = nodes.get(node + 3);
-            if (listNode != -1) {
-                listNode++;
-                while(listNode != -1) {
-                    mappedValues.add(values.get(listNode));
-                    listNode++;
-                    listNode = values.get(listNode);
-                }
-            }
-        }
-        return mappedValues;
     }
     
     // JH: Just to repeat, do not use bytes, but chars.

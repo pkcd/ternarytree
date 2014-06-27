@@ -1,28 +1,27 @@
 package de.mpii.ternarytree;
 
-import gnu.trove.list.TIntList;
-
 /**
  * This interface describes a trie data structure. It maintains
- * a set of integers against an ascii string key.
+ * an integer against a string key.
 */
 public interface Trie {
 
     /**
-     * This method returns the list of integer values associated with a key.
-     * @param key An ascii string or the key
-     * @return The list of integers associated with the key. This is empty if 
-     * the key does not exist.
+     * This method returns the integer value associated with a key.
+     * @param key, A string or the key
+     * @param defaultValue, The value to return if the key doesn't exist
+     * @return The integer mapped to the key. This is equal to defaultValue
+     * if the key does not exist
      */
-    public TIntList get(String key);
+    public int get(String key, int defaultValue);
     
     /**
-     * This method adds a (key, value) pair into the data structure. This
-     * does nothing when the given (key, value) pair already exists
-     * @param key An ascii string or the key
-     * @param value An integer or the value
+     * This method puts a (key, value) pair into the data structure. This
+     * overwrites the previous value when the given key already exists
+     * @param key, A string or the key
+     * @param value, An integer or the value
      */
-    public void add(String key, int value);
+    public void put(String key, int value);
     
     /**
      * Returns a string representation of the trie. It is a sequence of lines of

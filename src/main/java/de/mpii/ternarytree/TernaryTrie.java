@@ -120,4 +120,14 @@ public class TernaryTrie implements Trie{
         }
         return bytes;
     }
+
+    public int get(String key, int defaultValue) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public void put(String key, int value) {
+        // TODO Auto-generated method stub
+        
+    }
 }

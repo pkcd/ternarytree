@@ -3,7 +3,6 @@ package de.mpii.ternarytree;
 import static org.junit.Assert.*;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.Random;
 
@@ -22,9 +21,9 @@ public class CommonTrieTest {
      *   layout and order of keys - not a good idea.
      */
     public static void testBasicInsertionAndToString1(Trie tt) {
-        tt.add("barack", 0);
-        tt.add("barack obama", 1);
-        tt.add("barricade", 2);
+        tt.put("barack", 0);
+        tt.put("barack obama", 1);
+        tt.put("barricade", 2);
         String expected = "barack , {0}\n"
                          +"barack obama , {1}\n"
                          +"barricade , {2}\n";
@@ -33,10 +32,10 @@ public class CommonTrieTest {
     }
 
     public static void testBasicInsertionAndToString2(Trie tt) {
-        tt.add("barack", 0);
-        tt.add("barack obama", 1);
-        tt.add("barack obama", 2);
-        tt.add("barricade", 2);
+        tt.put("barack", 0);
+        tt.put("barack obama", 1);
+        tt.put("barack obama", 2);
+        tt.put("barricade", 2);
         String expected = "barack , {0}\n"
                          +"barack obama , {1, 2}\n"
                          +"barricade , {2}\n";
@@ -45,54 +44,54 @@ public class CommonTrieTest {
     }
 
     public static void testGet1(Trie tt) {
-        tt.add("barack", 0);
-        tt.add("barack obama", 1);
-        tt.add("barack obama", 2);
-        tt.add("barricade", 2);
+        tt.put("barack", 0);
+        tt.put("barack obama", 1);
+        tt.put("barack obama", 2);
+        tt.put("barricade", 2);
         
-        assertEquals("{1, 2}", tt.get("barack obama").toString());
-        assertEquals("{0}", tt.get("barack").toString());
-        assertEquals("{2}", tt.get("barricade").toString());
+        assertEquals(2, tt.get("barack obama", -1));
+        assertEquals(0, tt.get("barack", -1));
+        assertEquals(2, tt.get("barricade", -1));
         //System.out.println(tt.toString());
     }
 
     public static void testGet2(Trie tt) {
-        tt.add("barack", 0);
-        tt.add("obama", 1);
-        tt.add("obama", 2);
-        tt.add("zynga", 2);
+        tt.put("barack", 0);
+        tt.put("obama", 1);
+        tt.put("obama", 2);
+        tt.put("zynga", 2);
         
-        assertEquals("{0}", tt.get("barack").toString());
-        assertEquals("{1, 2}", tt.get("obama").toString());
-        assertEquals("{2}", tt.get("zynga").toString());
+        assertEquals(0, tt.get("barack", -1));
+        assertEquals(2, tt.get("obama", -1));
+        assertEquals(2, tt.get("zynga", -1));
         //System.out.println(tt.toString());
     }
     
     public static void testGet3(Trie tt) {
-      tt.add("the red dog", 0);
-      tt.add("the red", 1);
-      tt.add("red king", 2);
-      tt.add("the new kid", 3);
-      tt.add("a", 4);
-      tt.add("my name is earl", 5);
-      tt.add("saving private ryan", 6);
-      tt.add("saving", 7);
-      tt.add("academy award", 8);
-      tt.add("academy award for best actor", 9);
+      tt.put("the red dog", 0);
+      tt.put("the red", 1);
+      tt.put("red king", 2);
+      tt.put("the new kid", 3);
+      tt.put("a", 4);
+      tt.put("my name is earl", 5);
+      tt.put("saving private ryan", 6);
+      tt.put("saving", 7);
+      tt.put("academy award", 8);
+      tt.put("academy award for best actor", 9);
       
-      assertEquals(0, tt.get("the red dog").get(0));
-      assertEquals(1, tt.get("the red").get(0));
-      assertEquals(2, tt.get("red king").get(0));
-      assertEquals(3, tt.get("the new kid").get(0));
-      assertEquals(4, tt.get("a").get(0));
-      assertEquals(5, tt.get("my name is earl").get(0));
-      assertEquals(6, tt.get("saving private ryan").get(0));
-      assertEquals(7, tt.get("saving").get(0));
-      assertEquals(8, tt.get("academy award").get(0));
-      assertEquals(9, tt.get("academy award for best actor").get(0));
+      assertEquals(0, tt.get("the red dog", -1));
+      assertEquals(1, tt.get("the red", -1));
+      assertEquals(2, tt.get("red king", -1));
+      assertEquals(3, tt.get("the new kid", -1));
+      assertEquals(4, tt.get("a", -1));
+      assertEquals(5, tt.get("my name is earl", -1));
+      assertEquals(6, tt.get("saving private ryan", -1));
+      assertEquals(7, tt.get("saving", -1));
+      assertEquals(8, tt.get("academy award", -1));
+      assertEquals(9, tt.get("academy award for best actor", -1));
       
-      assertTrue(tt.get("academy awar").isEmpty());
-      assertTrue(tt.get("an").isEmpty());
+      assertEquals(-1, tt.get("academy awar", -1));
+      assertEquals(-1, tt.get("an", -1));
   }
     
     public static void testRigorous(Trie tt) {
@@ -105,12 +104,11 @@ public class CommonTrieTest {
             for (int i = 0; i < length; i++) {
                 key += (char)(r.nextInt(26) + 'a');
             }
-            TIntList existing = tt.get(key);
-            TIntArrayList newList = new TIntArrayList(existing);
+            int existing = tt.get(key, -1);
+            assertEquals(-1, existing);
             int value = r.nextInt(100);
-            newList.add(value);
-            tt.add(key, value);
-            assertEqualsList(newList , new TIntArrayList(tt.get(key)));
+            tt.put(key, value);
+            assertEquals(value, tt.get(key, -1));
         }
         //System.out.println(tt.toString());
     }
