@@ -3,8 +3,9 @@ package de.mpii.ternarytree;
 import java.io.UnsupportedEncodingException;
 
 import gnu.trove.list.TByteList;
+import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TCharArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 /**
@@ -16,7 +17,7 @@ import gnu.trove.list.array.TIntArrayList;
  */
 public class TernaryTriePrimitive implements Trie{
     // JH: Why not use a char list? This way you are independent of the encoding.
-    TByteList labels;
+    TCharList labels;
     TIntList nodes;
     // JH: Seeing from the unit tests, you allow the same string to be inserted
     // with the same value. I don't think this is necessary, a regular Map-style
@@ -25,20 +26,19 @@ public class TernaryTriePrimitive implements Trie{
     int root;
     
     public TernaryTriePrimitive() {
-        labels = new TByteArrayList();
+        labels = new TCharArrayList();
         nodes = new TIntArrayList();
         root = -1;
     }
 
-    public int get(String keyString, int defaultValue) {
+    public int get(String key, int defaultValue) {
         int node = root;
         int pos = 0;
-        byte[] chars = getBytes(keyString);
         while (node != -1) {
-            if (chars[pos] < labels.get(node/4)) {
+            if (key.charAt(pos) < labels.get(node/4)) {
                 node = nodes.get(node);
-            } else if(chars[pos] == labels.get(node/4)) {
-                if (pos == chars.length - 1) {
+            } else if(key.charAt(pos) == labels.get(node/4)) {
+                if (pos == key.length() - 1) {
                     break;
                 } else {
                     node = nodes.get(node + 1);
@@ -56,27 +56,26 @@ public class TernaryTriePrimitive implements Trie{
     }
     
     public void put(String key, int value) {
-        byte[] bytes = getBytes(key);
-        root = put(root, bytes, 0, value);
+        root = put(root, key, 0, value);
     }
     
-    private int put(int node, byte[] chars, int pos, int value) {
-        byte chr = chars[pos];
+    private int put(int node, String key, int pos, int value) {
+        char chr = key.charAt(pos);
         if (node == -1) {
             node = nodes.size();
             nodes.add(new int[]{-1, -1, -1, -1});
             labels.add(chr);
         }
         if (chr < labels.get(node/4)) {
-            nodes.set(node, put(nodes.get(node), chars, pos, value));
+            nodes.set(node, put(nodes.get(node), key, pos, value));
         } else if (chr == labels.get(node/4)) {
-            if (pos < chars.length  - 1) {
-                nodes.set(node + 1, put(nodes.get(node + 1), chars, pos + 1, value));
+            if (pos < key.length()  - 1) {
+                nodes.set(node + 1, put(nodes.get(node + 1), key, pos + 1, value));
             } else {
                 nodes.set(node + 3, value);
             }
         } else {
-             nodes.set(node + 2, put(nodes.get(node + 2), chars, pos, value));
+             nodes.set(node + 2, put(nodes.get(node + 2), key, pos, value));
         }
         return node;
     }
@@ -100,16 +99,5 @@ public class TernaryTriePrimitive implements Trie{
             repr = toString(nodes.get(node + 2), repr, prefix);
         }
         return repr;
-    }
-    
-    // JH: Just to repeat, do not use bytes, but chars.
-    private byte[] getBytes(String str) {
-        byte[] bytes = null;
-        try {
-            bytes = str.getBytes("US-ASCII");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return bytes;
     }
 }
