@@ -32,23 +32,23 @@ public class TernaryTriePrimitive implements Trie{
         int node = root;
         int pos = 0;
         while (node != -1) {
-            if (key.charAt(pos) < labels.get(node/4)) {
-                node = nodes.get(node);
-            } else if(key.charAt(pos) == labels.get(node/4)) {
+            if (key.charAt(pos) < getNodeKey(node)) {
+                node = getLessChild(node);
+            } else if(key.charAt(pos) == getNodeKey(node)) {
                 if (pos == key.length() - 1) {
                     break;
                 } else {
-                    node = nodes.get(node + 1);
+                    node = getEqualChild(node);
                     pos++;
                 }
             } else {
-                node = nodes.get(node + 2);
+                node = getGreatChild(node);
             }
         }
         if (node == -1) {
             return defaultValue;
         } else {
-            return nodes.get(node + 3);
+            return getNodeValue(node);
         }
     }
     
@@ -59,22 +59,65 @@ public class TernaryTriePrimitive implements Trie{
     private int put(int node, String key, int pos, int value) {
         char chr = key.charAt(pos);
         if (node == -1) {
-            node = nodes.size();
-            nodes.add(new int[]{-1, -1, -1, -1});
-            labels.add(chr);
+            node = getNewNode(chr);
         }
-        if (chr < labels.get(node/4)) {
-            nodes.set(node, put(nodes.get(node), key, pos, value));
-        } else if (chr == labels.get(node/4)) {
+        if (chr < getNodeKey(node)) {
+            setLessChild(node, put(getLessChild(node), key, pos, value));
+        } else if (chr == getNodeKey(node)) {
             if (pos < key.length()  - 1) {
-                nodes.set(node + 1, put(nodes.get(node + 1), key, pos + 1, value));
+                setEqualChild(node, put(getEqualChild(node), key, pos + 1, value));
             } else {
-                nodes.set(node + 3, value);
+                setNodeValue(node, value);
             }
         } else {
-             nodes.set(node + 2, put(nodes.get(node + 2), key, pos, value));
+             setGreatChild(node, put(getGreatChild(node), key, pos, value));
         }
         return node;
+    }
+    
+    private int getLessChild(int node) {
+        return nodes.get(node);
+    }
+    
+    private int getEqualChild(int node) {
+        return nodes.get(node + 1);
+    }
+    
+    private int getGreatChild(int node) {
+        return nodes.get(node + 2);
+    }
+    
+    private int getNodeValue(int node) {
+        return nodes.get(node + 3);
+    }
+    
+    private char getNodeKey(int node) {
+        return labels.get(node/4);
+    }
+    
+    private int getNewNode(char chr) {
+        int newNode = nodes.size();
+        for (int i = 0; i < 4; i++) {
+            nodes.add(-1);
+        }
+        labels.add(chr);
+        return newNode;
+    }
+    
+    private void setLessChild(int parentNode, int childNode) {
+        nodes.set(parentNode, childNode);
+    }
+    
+    private void setEqualChild(int parentNode, int childNode) {
+        nodes.set(parentNode + 1, childNode);
+    }
+    
+    private void setGreatChild(int parentNode, int childNode) {
+        nodes.set(parentNode + 2, childNode);
+    }
+    
+    private void setNodeValue(int node, int value) {
+        nodes.set(node + 3, value);
     }
     
     public String getContent() {
