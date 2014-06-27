@@ -130,4 +130,9 @@ public class TernaryTrie implements Trie{
         // TODO Auto-generated method stub
         
     }
+
+    public String getContent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

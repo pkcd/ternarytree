@@ -23,11 +23,10 @@ public interface Trie {
      */
     public void put(String key, int value);
     
+    
     /**
-     * Returns a string representation of the trie. It is a sequence of lines of
-     * the form "key, values". The lines are ordered as in depth first traversal
-     * where left, equal and right childs are given decreasing priorities.
+     * Returns the contents of the trie in a string. It is a sequence of lines of
+     * the form "key, values".
      */
-    @Override
-    public String toString();
+    public String getContent();
 }

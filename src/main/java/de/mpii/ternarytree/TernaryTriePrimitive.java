@@ -1,8 +1,5 @@
 package de.mpii.ternarytree;
 
-import java.io.UnsupportedEncodingException;
-
-import gnu.trove.list.TByteList;
 import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TCharArrayList;
@@ -80,23 +77,22 @@ public class TernaryTriePrimitive implements Trie{
         return node;
     }
     
-    @Override
-    public String toString() {
+    public String getContent() {
         // JH: It's not a good idea to have the whole trie represented in the
         // toString method - this is also used in the debugger and should be concise,
         // e.g.: TT (X nodes).
-        String repr = toString(root, "", "");
+        String repr = getContent(root, "", "");
         return repr;
     }
     
-    private String toString(int node, String repr, String prefix) {
+    private String getContent(int node, String repr, String prefix) {
         if (node != -1) {
             if (nodes.get(node + 3) != -1) {
                 repr += prefix + (char)labels.get(node/4) + " , " + nodes.get(node + 3) + "\n";
             }
-            repr = toString(nodes.get(node), repr, prefix);
-            repr = toString(nodes.get(node + 1), repr, prefix + (char)labels.get(node/4));
-            repr = toString(nodes.get(node + 2), repr, prefix);
+            repr = getContent(nodes.get(node), repr, prefix);
+            repr = getContent(nodes.get(node + 1), repr, prefix + (char)labels.get(node/4));
+            repr = getContent(nodes.get(node + 2), repr, prefix);
         }
         return repr;
     }
