@@ -4,10 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface Serializable {
+/**
+ * An interface to add serialization/deserialization capabilities to a data
+ * structure.
+ * 
+ * @param <T>
+ *            The type of object created after deserialzation.
+ */
+public interface Serializable<T> {
 
     /**
-     * This method serializes the current state of the trie into an
+     * This method serializes the current state of the structure into an
      * outputstream.
      * 
      * @param stream
@@ -18,14 +25,14 @@ public interface Serializable {
     public void serialize(OutputStream stream) throws IOException;
 
     /**
-     * This method replaces the contents of the trie with the serialized output
-     * from input stream.
+     * This method recreates the structure along with its state from the
+     * serialized output
      * 
      * @param stream
      *            The stream containing output from serialize method.
      * @throws IOException
      *             If there is an error while reading from stream.
      */
-    public void deserialize(InputStream stream) throws IOException;
+    public T deserialize(InputStream stream) throws IOException;
 
 }
