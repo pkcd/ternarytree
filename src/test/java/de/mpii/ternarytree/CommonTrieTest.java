@@ -1,6 +1,9 @@
 package de.mpii.ternarytree;
 
 import static org.junit.Assert.*;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -39,34 +42,22 @@ public class CommonTrieTest {
         }
     }
 
-    /*
-     * JH: do not use toString for testing - toString is meant solely for
-     * representation in human readable form and can easily change, breaking all
-     * the tests. You already have testGet methods, which should be sufficient.
-     * With the way you are testing using toString, you are also dependent on
-     * the internal layout and order of keys - not a good idea.
-     */
     @Test
-    public void testBasicInsertionAndToString1() {
-        t.put("barack", 0);
-        t.put("barack obama", 1);
-        t.put("barricade", 2);
-        String expected = "barack , {0}\n" + "barack obama , {1}\n"
-                + "barricade , {2}\n";
-        assertEquals(expected, t.toString());
-        // System.out.println(tt.toString());
-    }
-
-    @Test
-    public void testBasicInsertionAndToString2() {
+    public void testBasicInsertionAndGetContent() {
         t.put("barack", 0);
         t.put("barack obama", 1);
         t.put("barack obama", 2);
         t.put("barricade", 2);
-        String expected = "barack , {0}\n" + "barack obama , {1, 2}\n"
-                + "barricade , {2}\n";
-        assertEquals(expected, t.toString());
-        // System.out.println(tt.toString());
+        
+        String content = t.getContent();
+        TObjectIntMap<String> hm = new TObjectIntHashMap<String>();
+        for (String keyValue : content.split("\n")) {
+            hm.put(keyValue.split("\t")[0], Integer.valueOf(keyValue.split("\t")[1]));
+        }
+        assertEquals(0, hm.get("barack"));
+        assertEquals(2, hm.get("barack obama"));
+        assertEquals(2, hm.get("barricade"));
+        // System.out.println(t.getContent());
     }
 
     @Test

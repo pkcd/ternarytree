@@ -26,7 +26,7 @@ public interface Trie {
     
     /**
      * Returns the contents of the trie in a string. It is a sequence of lines of
-     * the form "key, values".
+     * the form "key<tab>values".
      */
     public String getContent();
     
