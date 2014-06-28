@@ -1,9 +1,6 @@
 package de.mpii.ternarytree;
 
 import static org.junit.Assert.*;
-import gnu.trove.iterator.TIntIterator;
-import gnu.trove.list.TIntList;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -13,12 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-/**
- * JH: The idea of having a unified testing environment for all implementations
- * is nice However, having to put each additonal method in each of the separate
- * test classes is a bit cumbersome. Maybe have a highlevel wrapper that does
- * this?
- */
 @RunWith(Parameterized.class)
 public class CommonTrieTest {
 
@@ -152,15 +143,4 @@ public class CommonTrieTest {
         // System.out.println(tt.toString());
     }
 
-    /*
-     * JH: this modifies the original lists and does not check for order
-     * equality, not a robust implementation.
-     */
-    private static void assertEqualsList(TIntList a, TIntList b) {
-        TIntIterator iter = a.iterator();
-        while (iter.hasNext()) {
-            b.remove(iter.next());
-        }
-        assertEquals(0, b.size());
-    }
 }
