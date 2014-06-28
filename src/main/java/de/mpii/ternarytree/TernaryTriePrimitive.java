@@ -124,10 +124,10 @@ public class TernaryTriePrimitive implements Trie, Serializable{
     private StringBuilder getContent(int node, StringBuilder repr, String prefix) {
         if (node != -1) {
             if (nodes.get(node + 3) != -1) {
-                repr.append(prefix + (char)labels.get(node/4) + "\t" + nodes.get(node + 3) + "\n");
+                repr.append(prefix + String.valueOf(labels.get(node/4)) + "\t" + String.valueOf(nodes.get(node + 3)) + "\n");
             }
             repr = getContent(nodes.get(node), repr, prefix);
-            repr = getContent(nodes.get(node + 1), repr, prefix + (char)labels.get(node/4));
+            repr = getContent(nodes.get(node + 1), repr, prefix + labels.get(node/4));
             repr = getContent(nodes.get(node + 2), repr, prefix);
         }
         return repr;
