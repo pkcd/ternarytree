@@ -13,7 +13,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TCharArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-public class TernaryTriePrimitive implements Trie, Serializable{
+public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     TCharList labels;
     TIntList nodes;
     int root;
@@ -144,9 +144,10 @@ public class TernaryTriePrimitive implements Trie, Serializable{
         for (int i = 0; i < labels.size(); i++) {
             writer.writeChar(labels.get(i));
         }
+        writer.close();
     }
 
-    public void deserialize(InputStream stream) throws IOException {
+    public Trie deserialize(InputStream stream) throws IOException {
         DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
         nodes.clear();
         labels.clear();
@@ -158,5 +159,6 @@ public class TernaryTriePrimitive implements Trie, Serializable{
         for (int i = 0; i < numLabels; i++) {
             labels.add(reader.readChar());
         }
+        return this;
     }
 }

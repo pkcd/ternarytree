@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -87,6 +91,16 @@ public class CommonTrieTest {
 
     @Test
     public void testGet3() {
+        testGet3Common(false);
+    }
+    
+    @Test
+    public void testSerialize3() {
+            testGet3Common(true);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void testGet3Common(boolean serialize) {
         t.put("the red dog", 0);
         t.put("the red", 1);
         t.put("red king", 2);
@@ -97,7 +111,18 @@ public class CommonTrieTest {
         t.put("saving", 7);
         t.put("academy award", 8);
         t.put("academy award for best actor", 9);
-
+        
+        if(serialize) {
+            try{
+                File serial = File.createTempFile("serialTrie", "gzip");
+                Serializable<Trie> st = (Serializable)t;
+                st.serialize(new FileOutputStream(serial));
+                t = st.deserialize(new FileInputStream(serial));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
         assertEquals(0, t.get("the red dog"));
         assertEquals(1, t.get("the red"));
         assertEquals(2, t.get("red king"));
@@ -132,5 +157,5 @@ public class CommonTrieTest {
         }
         // System.out.println(tt.toString());
     }
-
+    
 }
