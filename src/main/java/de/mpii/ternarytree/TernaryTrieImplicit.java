@@ -22,6 +22,7 @@ public class TernaryTrieImplicit implements Trie{
         lists = new TIntObjectHashMap<TIntList>();
     }
     
+    /*
     public TIntList get(String keyString) {
         byte[] chars = getBytes(keyString);
         int node = 0, pos = 0;
@@ -47,6 +48,7 @@ public class TernaryTrieImplicit implements Trie{
         }
         return l;
     }
+    */
     
     public void add(String key, int value) {
         byte[] bytes = getBytes(key);
@@ -125,5 +127,10 @@ public class TernaryTrieImplicit implements Trie{
     public String getContent() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public int get(String key) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

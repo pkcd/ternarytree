@@ -9,11 +9,10 @@ public interface Trie {
     /**
      * This method returns the integer value associated with a key.
      * @param key, A string or the key
-     * @param defaultValue, The value to return if the key doesn't exist
-     * @return The integer mapped to the key. This is equal to defaultValue
+     * @return The integer mapped to the key. This is equal to -1
      * if the key does not exist
      */
-    public int get(String key, int defaultValue);
+    public int get(String key);
     
     /**
      * This method puts a (key, value) pair into the data structure. This

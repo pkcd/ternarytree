@@ -24,7 +24,7 @@ public class TernaryTriePrimitive implements Trie, Serializable{
         root = -1;
     }
 
-    public int get(String key, int defaultValue) {
+    public int get(String key) {
         int node = root;
         int pos = 0;
         while (node != -1) {
@@ -42,7 +42,7 @@ public class TernaryTriePrimitive implements Trie, Serializable{
             }
         }
         if (node == -1) {
-            return defaultValue;
+            return -1;
         } else {
             return getNodeValue(node);
         }

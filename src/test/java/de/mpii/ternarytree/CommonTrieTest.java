@@ -67,9 +67,9 @@ public class CommonTrieTest {
         t.put("barack obama", 2);
         t.put("barricade", 2);
 
-        assertEquals(2, t.get("barack obama", -1));
-        assertEquals(0, t.get("barack", -1));
-        assertEquals(2, t.get("barricade", -1));
+        assertEquals(2, t.get("barack obama"));
+        assertEquals(0, t.get("barack"));
+        assertEquals(2, t.get("barricade"));
         // System.out.println(tt.toString());
     }
 
@@ -80,9 +80,9 @@ public class CommonTrieTest {
         t.put("obama", 2);
         t.put("zynga", 2);
 
-        assertEquals(0, t.get("barack", -1));
-        assertEquals(2, t.get("obama", -1));
-        assertEquals(2, t.get("zynga", -1));
+        assertEquals(0, t.get("barack"));
+        assertEquals(2, t.get("obama"));
+        assertEquals(2, t.get("zynga"));
         // System.out.println(tt.toString());
     }
 
@@ -99,19 +99,19 @@ public class CommonTrieTest {
         t.put("academy award", 8);
         t.put("academy award for best actor", 9);
 
-        assertEquals(0, t.get("the red dog", -1));
-        assertEquals(1, t.get("the red", -1));
-        assertEquals(2, t.get("red king", -1));
-        assertEquals(3, t.get("the new kid", -1));
-        assertEquals(4, t.get("a", -1));
-        assertEquals(5, t.get("my name is earl", -1));
-        assertEquals(6, t.get("saving private ryan", -1));
-        assertEquals(7, t.get("saving", -1));
-        assertEquals(8, t.get("academy award", -1));
-        assertEquals(9, t.get("academy award for best actor", -1));
+        assertEquals(0, t.get("the red dog"));
+        assertEquals(1, t.get("the red"));
+        assertEquals(2, t.get("red king"));
+        assertEquals(3, t.get("the new kid"));
+        assertEquals(4, t.get("a"));
+        assertEquals(5, t.get("my name is earl"));
+        assertEquals(6, t.get("saving private ryan"));
+        assertEquals(7, t.get("saving"));
+        assertEquals(8, t.get("academy award"));
+        assertEquals(9, t.get("academy award for best actor"));
 
-        assertEquals(-1, t.get("academy awar", -1));
-        assertEquals(-1, t.get("an", -1));
+        assertEquals(-1, t.get("academy awar"));
+        assertEquals(-1, t.get("an"));
     }
 
     @Test
@@ -125,11 +125,11 @@ public class CommonTrieTest {
             for (int i = 0; i < length; i++) {
                 key += (char) (r.nextInt(26) + 'a');
             }
-            int existing = t.get(key, -1);
+            int existing = t.get(key);
             assertEquals(-1, existing);
             int value = r.nextInt(100);
             t.put(key, value);
-            assertEquals(value, t.get(key, -1));
+            assertEquals(value, t.get(key));
         }
         // System.out.println(tt.toString());
     }

@@ -41,6 +41,7 @@ public class TernaryTrie implements Trie{
         root = null;
     }
     
+    /*
     public TIntList get(String key) {
         Node p = root;
         int pos = 0;
@@ -65,6 +66,7 @@ public class TernaryTrie implements Trie{
             return new TIntArrayList();
         }
     }
+    */
     
     public void add(String key, int value) {
         byte[] bytes = getBytes(key);
@@ -134,5 +136,10 @@ public class TernaryTrie implements Trie{
     public String getContent() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public int get(String key) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
