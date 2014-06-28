@@ -23,7 +23,6 @@ public class CommonTrieTest {
     public static Collection<Object[]> classesAndMethods() {
         return Arrays
                 .asList(new Object[][] { { TernaryTrie.class },
-                        { TernaryTrieImplicit.class },
                         { TernaryTriePrimitive.class } });
     }
 
