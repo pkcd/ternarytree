@@ -14,17 +14,20 @@ import gnu.trove.list.array.TCharArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
-    TCharList labels;
-    TIntList nodes;
-    int root;
+    private TCharList labels;
+    private TIntList nodes;
+    private int root;
+    private double threshold;
     
-    public TernaryTriePrimitive() {
+    public TernaryTriePrimitive(double t) {
         labels = new TCharArrayList();
         nodes = new TIntArrayList();
         root = -1;
+        threshold = t;
     }
 
     public int get(String key) {
+        key = getRelevantPrefix(key);
         int node = root;
         int pos = 0;
         while (node != -1) {
@@ -49,6 +52,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     }
     
     public void put(String key, int value) {
+        key = getRelevantPrefix(key);
         root = put(root, key, 0, value);
     }
     
@@ -133,6 +137,11 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         return repr;
     }
 
+    private String getRelevantPrefix(String key) {
+        int cutLength = (int)Math.ceil(key.length() * threshold);
+        return key.substring(0, cutLength);
+    }
+    
     public void serialize(OutputStream stream) throws IOException {
         DataOutputStream writer = new DataOutputStream(
                 new BufferedOutputStream(stream));
