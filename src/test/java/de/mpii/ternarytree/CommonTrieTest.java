@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
@@ -21,23 +23,29 @@ import org.junit.runners.Parameterized;
 public class CommonTrieTest {
 
     private Class<? extends Trie> clazz;
+    private double threshold;
     private Trie t;
 
-    @Parameterized.Parameters(name= "{0}")
+    @Parameterized.Parameters(name= "{0}, t = {1}")
     public static Collection<Object[]> classesAndMethods() {
         return Arrays
-                .asList(new Object[][] { { TernaryTrie.class },
-                        { TernaryTriePrimitive.class } });
+                .asList(new Object[][] { //{ TernaryTrie.class, 1},
+                        { TernaryTriePrimitive.class, 0.8 },
+                        { TernaryTriePrimitive.class, 1} });
     }
 
-    public CommonTrieTest(Class<? extends Trie> clazz) {
+    public CommonTrieTest(Class<? extends Trie> clazz, double threshold) {
         this.clazz = clazz;
+        this.threshold = threshold;
     }
 
     @Before
-    public void initialize() {
+    public void initialize() throws NoSuchMethodException, SecurityException,
+            IllegalArgumentException, InvocationTargetException {
         try {
-            t = this.clazz.newInstance();
+            Constructor<? extends Trie> ctor = this.clazz
+                    .getConstructor(double.class);
+            t = ctor.newInstance(this.threshold);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -57,9 +65,9 @@ public class CommonTrieTest {
         for (String keyValue : content.split("\n")) {
             hm.put(keyValue.split("\t")[0], Integer.valueOf(keyValue.split("\t")[1]));
         }
-        assertEquals(0, hm.get("barack"));
-        assertEquals(2, hm.get("barack obama"));
-        assertEquals(2, hm.get("barricade"));
+        assertEquals(0, hm.get(getRelevantPrefix("barack")));
+        assertEquals(2, hm.get(getRelevantPrefix("barack obama")));
+        assertEquals(2, hm.get(getRelevantPrefix("barricade")));
         // System.out.println(t.getContent());
     }
 
@@ -156,6 +164,11 @@ public class CommonTrieTest {
             assertEquals(value, t.get(key));
         }
         // System.out.println(tt.toString());
+    }
+    
+    private String getRelevantPrefix(String key) {
+        int cutLength = (int)Math.ceil(key.length() * threshold);
+        return key.substring(0, cutLength);
     }
     
 }

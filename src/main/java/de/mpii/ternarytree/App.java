@@ -27,7 +27,7 @@ public class App {
         CommandLine cmd = parser.parse(options, args);
         String inputPath = cmd.getOptionValue("i");
         String outputPath = cmd.getOptionValue("o");
-        TernaryTriePrimitive t = new TernaryTriePrimitive();
+        TernaryTriePrimitive t = new TernaryTriePrimitive(1);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     new GZIPInputStream(Files.newInputStream(Paths
