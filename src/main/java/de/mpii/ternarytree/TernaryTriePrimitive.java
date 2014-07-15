@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
@@ -18,14 +19,55 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     private TIntList nodes;
     private int root;
     private double threshold;
+    private char delimiter;
     
     public TernaryTriePrimitive(double t) {
+        this(t, ' ');
+    }
+    
+    public TernaryTriePrimitive(double t, char d) {
         labels = new TCharArrayList();
         nodes = new TIntArrayList();
         root = -1;
         threshold = t;
+        delimiter = d;
     }
 
+    public String[] getLongestMatch(String[] tokens, int start) {
+        int node = root;
+        for(int iToken = start; iToken < tokens.length; iToken++) {
+            String token = getRelevantPrefix(tokens[iToken]);
+            int pos = 0;
+            while (node != -1) {
+                if (token.charAt(pos) < getNodeKey(node)) {
+                    node = getLessChild(node);
+                } else if(token.charAt(pos) == getNodeKey(node)) {
+                    if (pos == token.length() - 1) {
+                        break;
+                    } else {
+                        node = getEqualChild(node);
+                        pos++;
+                    }
+                } else {
+                    node = getGreatChild(node);
+                }
+            }
+            if (node == -1) {
+                return Arrays.copyOfRange(tokens, start, iToken);
+            } else {
+                //match delimiter
+                if (delimiter < getNodeKey(node)) {
+                    node = getLessChild(node);
+                } else if(delimiter == getNodeKey(node)) {
+                    node = getEqualChild(node);
+                } else {
+                    node = getGreatChild(node);
+                }
+            }
+        }
+        return Arrays.copyOfRange(tokens, start, tokens.length);
+    }
+    
     public int get(String key) {
         key = getRelevantPrefix(key);
         int node = root;
