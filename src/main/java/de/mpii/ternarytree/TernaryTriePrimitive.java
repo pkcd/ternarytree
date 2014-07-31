@@ -32,6 +32,8 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         threshold = t;
         delimiter = d;
     }
+    
+    // constructor from file.
 
     public String[] getLongestMatch(String[] tokens, int start) {
         int node = root;
@@ -68,6 +70,9 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         return Arrays.copyOfRange(tokens, start, tokens.length);
     }
     
+    // add public int get(String[] key)
+        
+    // split on delim here.
     public int get(String key) {
         key = getRelevantPrefix(key);
         int node = root;
@@ -93,6 +98,9 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         }
     }
     
+    // add put (String[])
+    
+    // split on delim here.    
     public void put(String key, int value) {
         key = getRelevantPrefix(key);
         root = put(root, key, 0, value);
@@ -184,6 +192,8 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         return key.substring(0, cutLength);
     }
     
+    // serialize threshold to output
+    // serialize version 1.0
     public void serialize(OutputStream stream) throws IOException {
         DataOutputStream writer = new DataOutputStream(
                 new BufferedOutputStream(stream));
