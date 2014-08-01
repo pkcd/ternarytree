@@ -19,8 +19,8 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
   
     private static final int FORMAT_VERSION = 1;
   
-    private TCharList labels;
-    private TIntList nodes;
+    private TCharList labels = new TCharArrayList();
+    private TIntList nodes = new TIntArrayList();
     private int root;
     private double threshold;
     private char delimiter;
@@ -30,8 +30,6 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     }
     
     public TernaryTriePrimitive(double t, char d) {
-        labels = new TCharArrayList();
-        nodes = new TIntArrayList();
         root = -1;
         threshold = t;
         delimiter = d;
@@ -214,6 +212,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         for (int i = 0; i < labels.size(); i++) {
             writer.writeChar(labels.get(i));
         }
+        writer.flush();
         writer.close();
     }
 
