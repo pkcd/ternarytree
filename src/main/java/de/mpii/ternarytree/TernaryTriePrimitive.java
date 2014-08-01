@@ -7,7 +7,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
@@ -33,18 +32,22 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         delimiter = d;
     }
     
-    // constructor from file.
-
-    public String[] getLongestMatch(String[] tokens, int start) {
+    public TernaryTriePrimitive(InputStream stream) throws IOException {
+        this.deserialize(stream);
+    }
+    
+    public Match getLongestMatch(String[] tokens, int start) {
         int node = root;
-        for(int iToken = start; iToken < tokens.length; iToken++) {
-            String token = getRelevantPrefix(tokens[iToken]);
+        int value = -1;
+        int iToken = start;
+        for(iToken = start; iToken < tokens.length; iToken++) {
+            String token = tokens[iToken];
             int pos = 0;
             while (node != -1) {
                 if (token.charAt(pos) < getNodeKey(node)) {
                     node = getLessChild(node);
                 } else if(token.charAt(pos) == getNodeKey(node)) {
-                    if (pos == token.length() - 1) {
+                    if (pos == getRelevantLength(token) - 1) {
                         break;
                     } else {
                         node = getEqualChild(node);
@@ -55,72 +58,73 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
                 }
             }
             if (node == -1) {
-                return Arrays.copyOfRange(tokens, start, iToken);
-            } else {
+                break;
+            } else{
                 //match delimiter
-                if (delimiter < getNodeKey(node)) {
-                    node = getLessChild(node);
-                } else if(delimiter == getNodeKey(node)) {
-                    node = getEqualChild(node);
-                } else {
-                    node = getGreatChild(node);
+                value = getNodeValue(node);
+                node = getEqualChild(node);
+                if (iToken < tokens.length - 1) {
+                    if (delimiter < getNodeKey(node)) {
+                        node = getLessChild(node);
+                    } else if(delimiter == getNodeKey(node)) {
+                        node = getEqualChild(node);
+                    } else {
+                        node = getGreatChild(node);
+                    }
                 }
             }
         }
-        return Arrays.copyOfRange(tokens, start, tokens.length);
+        return new Match(start, iToken - start, value);
     }
     
-    // add public int get(String[] key)
-        
-    // split on delim here.
-    public int get(String key) {
-        key = getRelevantPrefix(key);
-        int node = root;
-        int pos = 0;
-        while (node != -1) {
-            if (key.charAt(pos) < getNodeKey(node)) {
-                node = getLessChild(node);
-            } else if(key.charAt(pos) == getNodeKey(node)) {
-                if (pos == key.length() - 1) {
-                    break;
-                } else {
-                    node = getEqualChild(node);
-                    pos++;
-                }
-            } else {
-                node = getGreatChild(node);
-            }
-        }
-        if (node == -1) {
-            return -1;
+    public int get(String[] tokens) {
+        Match match = this.getLongestMatch(tokens, 0);
+        if (match.tokenCount == tokens.length) {
+            return match.value;
         } else {
-            return getNodeValue(node);
+            return -1;
         }
     }
-    
-    // add put (String[])
-    
-    // split on delim here.    
-    public void put(String key, int value) {
-        key = getRelevantPrefix(key);
-        root = put(root, key, 0, value);
+        
+    public int get(String key) {
+        return get(key.split(String.valueOf(delimiter)));
     }
     
-    private int put(int node, String key, int pos, int value) {
-        char chr = key.charAt(pos);
+    public void put (String[] tokens, int value) {
+        root = put(root, tokens, 0, 0, value);
+    }
+    
+    public void put(String key, int value) {
+        root = put(root, key.split(String.valueOf(delimiter)), 0, 0, value);
+    }
+    
+    private int put(int node, String[] tokens, int iToken, int pos, int value) {
+        int length = getRelevantLength(tokens[iToken]);
+        char chr = delimiter;
+        if (pos < length) {
+            chr = tokens[iToken].charAt(pos);
+        }
         if (node == -1) {
             node = getNewNode(chr);
         }
         if (chr < getNodeKey(node)) {
-            setLessChild(node, put(getLessChild(node), key, pos, value));
+            setLessChild(node, put(getLessChild(node), tokens, iToken, pos, value));
         } else if (chr == getNodeKey(node)) {
-            if (pos < key.length()  - 1) {
-                setEqualChild(node, put(getEqualChild(node), key, pos + 1, value));
+            if (iToken < tokens.length - 1) {
+                if (pos <= length  - 1) {
+                    setEqualChild(node, put(getEqualChild(node), tokens, iToken, pos + 1, value));
+                } else {
+                    setEqualChild(node, put(getEqualChild(node), tokens, iToken + 1, 0, value));
+                }
             } else {
-                setNodeValue(node, value);
+                if (pos < length - 1){
+                    setEqualChild(node, put(getEqualChild(node), tokens, iToken, pos + 1, value));
+                } else {
+                    setNodeValue(node, value);
+                }
             }
         } else {
-             setGreatChild(node, put(getGreatChild(node), key, pos, value));
+             setGreatChild(node, put(getGreatChild(node), tokens, iToken, pos, value));
         }
         return node;
     }
@@ -187,16 +191,16 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         return repr;
     }
 
-    private String getRelevantPrefix(String key) {
-        int cutLength = (int)Math.ceil(key.length() * threshold);
-        return key.substring(0, cutLength);
+    private int getRelevantLength(String key) {
+        return (int)Math.ceil(key.length() * threshold);
     }
     
-    // serialize threshold to output
-    // serialize version 1.0
     public void serialize(OutputStream stream) throws IOException {
         DataOutputStream writer = new DataOutputStream(
                 new BufferedOutputStream(stream));
+        writer.writeDouble(1.0);
+        writer.writeDouble(threshold);
+        writer.writeChar(delimiter);
         writer.writeInt(nodes.size());
         for (int i = 0; i < nodes.size(); i++) {
             writer.writeInt(nodes.get(i));
@@ -212,6 +216,9 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
         nodes.clear();
         labels.clear();
+        reader.readDouble(); //discard version
+        threshold = reader.readDouble();
+        delimiter = reader.readChar();
         int numNodes = reader.readInt();
         for (int i = 0; i < numNodes; i++) {
             nodes.add(reader.readInt());
@@ -223,3 +230,4 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         return this;
     }
 }
+

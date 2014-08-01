@@ -65,9 +65,9 @@ public class CommonTrieTest {
         for (String keyValue : content.split("\n")) {
             hm.put(keyValue.split("\t")[0], Integer.valueOf(keyValue.split("\t")[1]));
         }
-        assertEquals(0, hm.get(getRelevantPrefix("barack")));
-        assertEquals(2, hm.get(getRelevantPrefix("barack obama")));
-        assertEquals(2, hm.get(getRelevantPrefix("barricade")));
+        assertEquals(0, hm.get(getPrefixedString("barack")));
+        assertEquals(2, hm.get(getPrefixedString("barack obama")));
+        assertEquals(2, hm.get(getPrefixedString("barricade")));
         // System.out.println(t.getContent());
     }
 
@@ -142,7 +142,7 @@ public class CommonTrieTest {
         assertEquals(8, t.get("academy award"));
         assertEquals(9, t.get("academy award for best actor"));
 
-        assertEquals(-1, t.get("academy awar"));
+        assertEquals(-1, t.get("academy awa"));
         assertEquals(-1, t.get("an"));
     }
 
@@ -166,9 +166,16 @@ public class CommonTrieTest {
         // System.out.println(tt.toString());
     }
     
-    private String getRelevantPrefix(String key) {
-        int cutLength = (int)Math.ceil(key.length() * threshold);
-        return key.substring(0, cutLength);
+    private String getPrefixedString(String key) {
+        String[] tokens = key.split(" ");
+        String prefixedString = "";
+        for (int i = 0; i < tokens.length; i++) {
+            int cutLength = (int)Math.ceil(tokens[i].length() * threshold);
+            prefixedString += tokens[i].substring(0, cutLength);
+            if (i < tokens.length - 1) {
+                prefixedString += " ";
+            }
+        }
+        return prefixedString;
     }
-    
 }
