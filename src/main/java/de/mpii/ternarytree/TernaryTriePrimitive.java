@@ -1,19 +1,24 @@
 package de.mpii.ternarytree;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import gnu.trove.list.TCharList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TCharArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
+  
+    private static final int FORMAT_VERSION = 1;
+  
     private TCharList labels;
     private TIntList nodes;
     private int root;
@@ -32,8 +37,8 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         delimiter = d;
     }
     
-    public TernaryTriePrimitive(InputStream stream) throws IOException {
-        this.deserialize(stream);
+    public TernaryTriePrimitive(File trieFile) throws IOException {
+        this.deserialize(new FileInputStream(trieFile));
     }
     
     public Match getLongestMatch(String[] tokens, int start) {
@@ -79,8 +84,8 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     
     public int get(String[] tokens) {
         Match match = this.getLongestMatch(tokens, 0);
-        if (match.tokenCount == tokens.length) {
-            return match.value;
+        if (match.getTokenCount() == tokens.length) {
+            return match.getValue();
         } else {
             return -1;
         }
@@ -198,7 +203,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     public void serialize(OutputStream stream) throws IOException {
         DataOutputStream writer = new DataOutputStream(
                 new BufferedOutputStream(stream));
-        writer.writeDouble(1.0);
+        writer.writeInt(FORMAT_VERSION);
         writer.writeDouble(threshold);
         writer.writeChar(delimiter);
         writer.writeInt(nodes.size());
@@ -216,7 +221,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
         nodes.clear();
         labels.clear();
-        reader.readDouble(); //discard version
+        reader.readInt(); //discard version
         threshold = reader.readDouble();
         delimiter = reader.readChar();
         int numNodes = reader.readInt();
