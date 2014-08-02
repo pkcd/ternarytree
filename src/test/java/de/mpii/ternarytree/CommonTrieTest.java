@@ -1,6 +1,6 @@
 package de.mpii.ternarytree;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -107,7 +107,6 @@ public class CommonTrieTest {
             testGet3Common(true);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private void testGet3Common(boolean serialize) {
         t.put("the red dog", 0);
         t.put("the red", 1);
@@ -123,7 +122,7 @@ public class CommonTrieTest {
         if(serialize) {
             try{
                 File serial = File.createTempFile("serialTrie", "gzip");
-                Serializable<Trie> st = (Serializable)t;
+                SerializableTrie st = (SerializableTrie)t;
                 st.serialize(new FileOutputStream(serial));
                 t = st.deserialize(new FileInputStream(serial));
             } catch (IOException e) {

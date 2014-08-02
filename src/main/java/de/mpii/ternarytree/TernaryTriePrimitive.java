@@ -9,21 +9,23 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
+public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
     private static final int FORMAT_VERSION = 1;
-  
+      
     private TCharList labels = new TCharArrayList();
     private TIntList nodes = new TIntArrayList();
     private int root;
     private double threshold;
     private char delimiter;
+    
+    public TernaryTriePrimitive() {
+      this(1.0);
+    }
     
     public TernaryTriePrimitive(double t) {
         this(t, ' ');
@@ -34,11 +36,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         threshold = t;
         delimiter = d;
     }
-    
-    public TernaryTriePrimitive(File trieFile) throws IOException {
-        this.deserialize(new FileInputStream(trieFile));
-    }
-    
+        
     public Match getLongestMatch(String[] tokens, int start) {
         int node = root;
         int value = -1;
@@ -217,7 +215,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
     }
 
     public Trie deserialize(InputStream stream) throws IOException {
-        DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));        
         nodes.clear();
         labels.clear();
         reader.readInt(); //discard version

@@ -4,7 +4,7 @@
 
 	<groupId>de.mpii</groupId>
 	<artifactId>ternarytree</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 	<name>TernaryTree</name>
 	<url>http://github.com/yago-naga/ternarytree</url>
@@ -31,13 +31,13 @@
 					<noJekyll>true</noJekyll>
 					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
 					<merge>false</merge>
-					<dryRun>true</dryRun>
+					<dryRun>false</dryRun>
 					<branch>refs/heads/mvn-repo</branch>
 					<includes>
 						<include>**/*</include>
 					</includes>
-					<repositoryName>dmap</repositoryName>
-					<repositoryOwner>hoffart</repositoryOwner>
+					<repositoryName>ternarytree</repositoryName>
+					<repositoryOwner>yago-naga</repositoryOwner>
 				</configuration>
 				<executions>
 					<execution>
