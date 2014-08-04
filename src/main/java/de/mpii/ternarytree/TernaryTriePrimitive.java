@@ -202,6 +202,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         writer.writeInt(FORMAT_VERSION);
         writer.writeDouble(threshold);
         writer.writeChar(delimiter);
+        writer.writeInt(root);
         writer.writeInt(nodes.size());
         for (int i = 0; i < nodes.size(); i++) {
             writer.writeInt(nodes.get(i));
@@ -221,6 +222,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         reader.readInt(); //discard version
         threshold = reader.readDouble();
         delimiter = reader.readChar();
+        root = reader.readInt();
         int numNodes = reader.readInt();
         for (int i = 0; i < numNodes; i++) {
             nodes.add(reader.readInt());
