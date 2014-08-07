@@ -9,16 +9,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 
 public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
@@ -240,105 +233,5 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         }
         return this;
     }
-	
-	private int getNodeValue(int node) {
-		return nodes.get(node + 3);
-	}
-
-	private char getNodeKey(int node) {
-		return labels.get(node / 4);
-	}
-
-	private int getNewNode(char chr) {
-		int newNode = nodes.size();
-		for (int i = 0; i < 4; i++) {
-			nodes.add(-1);
-		}
-		labels.add(chr);
-		return newNode;
-	}
-
-	private void setLessChild(int parentNode, int childNode) {
-		nodes.set(parentNode, childNode);
-	}
-
-	private void setEqualChild(int parentNode, int childNode) {
-		nodes.set(parentNode + 1, childNode);
-	}
-
-	private void setGreatChild(int parentNode, int childNode) {
-		nodes.set(parentNode + 2, childNode);
-	}
-
-	private void setNodeValue(int node, int value) {
-		nodes.set(node + 3, value);
-	}
-
-	public String getContent() {
-		StringBuilder repr = getContent(root, new StringBuilder(), "");
-		return repr.toString();
-	}
-
-	private StringBuilder getContent(int node, StringBuilder repr, String prefix) {
-		if (node != -1) {
-			if (nodes.get(node + 3) != -1) {
-				repr.append(prefix + labels.get(node / 4) + "\t"
-						+ String.valueOf(nodes.get(node + 3)) + "\n");
-			}
-			repr = getContent(nodes.get(node), repr, prefix);
-			repr = getContent(nodes.get(node + 1), repr,
-					prefix + labels.get(node / 4));
-			repr = getContent(nodes.get(node + 2), repr, prefix);
-		}
-		return repr;
-	}
-
-	private int getRelevantLength(String key) {
-		return (int) Math.ceil(key.length() * threshold);
-	}
-
-	public void serialize(String file) throws IOException {
-		serialize(new FileOutputStream(new File(file)));
-	}
-
-	public Trie deserialize(String file) throws FileNotFoundException,
-			IOException {
-		return deserialize(new FileInputStream(new File(file)));
-	}
-
-	public void serialize(OutputStream stream) throws IOException {
-		DataOutputStream writer = new DataOutputStream(
-				new BufferedOutputStream(stream));
-		writer.writeInt(FORMAT_VERSION);
-		writer.writeDouble(threshold);
-		writer.writeChar(delimiter);
-		writer.writeInt(nodes.size());
-		for (int i = 0; i < nodes.size(); i++) {
-			writer.writeInt(nodes.get(i));
-		}
-		writer.writeInt(labels.size());
-		for (int i = 0; i < labels.size(); i++) {
-			writer.writeChar(labels.get(i));
-		}
-		writer.close();
-	}
-
-	public Trie deserialize(InputStream stream) throws IOException {
-		DataInputStream reader = new DataInputStream(new BufferedInputStream(
-				stream));
-		nodes.clear();
-		labels.clear();
-		reader.readInt(); // discard version
-		threshold = reader.readDouble();
-		delimiter = reader.readChar();
-		int numNodes = reader.readInt();
-		for (int i = 0; i < numNodes; i++) {
-			nodes.add(reader.readInt());
-		}
-		int numLabels = reader.readInt();
-		for (int i = 0; i < numLabels; i++) {
-			labels.add(reader.readChar());
-		}
-		return this;
-	}
 }
+
