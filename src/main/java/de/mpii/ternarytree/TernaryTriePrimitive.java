@@ -75,7 +75,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
                 }
             }
         }
-        return new Match(start, iToken - start, value);
+        return new Match(iToken - start, value);
     }
     
     public int get(String[] tokens) {
