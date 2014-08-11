@@ -182,12 +182,10 @@ public class CommonTrieTest {
           + "and was buried at Invalides .";
       String[] tokens = text.split(" ");
       Match match = ttp.getLongestMatch(tokens, 0);
-      assertEquals(0, match.getTokenOffset());
-      assertEquals(0, match.getTokenCount());
+      assertEquals(1, match.getTokenCount());
       
       match = ttp.getLongestMatch(tokens, 6);
-      assertEquals(6, match.getTokenOffset());
-      assertEquals(4, match.getTokenCount());
+      assertEquals(3, match.getTokenCount());
     }
     
     private String getPrefixedString(String key) {
