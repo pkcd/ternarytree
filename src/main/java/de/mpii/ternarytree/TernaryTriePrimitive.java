@@ -64,7 +64,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
                 //match delimiter
                 value = getNodeValue(node);
                 node = getEqualChild(node);
-                if (iToken < tokens.length - 1) {
+                if (node != -1 && iToken < tokens.length - 1) {
                     if (delimiter < getNodeKey(node)) {
                         node = getLessChild(node);
                     } else if(delimiter == getNodeKey(node)) {
