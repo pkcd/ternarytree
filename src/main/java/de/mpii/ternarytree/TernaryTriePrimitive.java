@@ -12,6 +12,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
@@ -37,6 +39,26 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         delimiter = d;
     }
         
+    /**
+     * Returns all matches found in the input tokens as a map in the form.
+     * tokenOffset -> tokenCount
+     * 
+     * @param tokens Tokenized text.
+     * @return Map of Matches: tokenOffset;tokenCount
+     */
+    public Map<Integer, Integer> getAllMatches(String[] tokens) {
+      Map<Integer, Integer> matches = new LinkedHashMap<Integer, Integer>();
+      for (int i = 0; i < tokens.length; ++i) {
+        Match m = getLongestMatch(tokens, i);
+        if (m.getTokenCount() > 0) {
+          matches.put(i, m.getTokenCount());
+          // Jump after longest match.
+          i += m.getTokenCount();
+        }
+      }
+      return matches;
+    }
+    
     public Match getLongestMatch(String[] tokens, int start) {
         int node = root;
         int value = -1;
