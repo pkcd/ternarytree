@@ -1,6 +1,7 @@
 package de.mpii.ternarytree;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -12,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.Before;
@@ -107,7 +109,6 @@ public class CommonTrieTest {
             testGet3Common(true);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private void testGet3Common(boolean serialize) {
         t.put("the red dog", 0);
         t.put("the red", 1);
@@ -123,7 +124,7 @@ public class CommonTrieTest {
         if(serialize) {
             try{
                 File serial = File.createTempFile("serialTrie", "gzip");
-                Serializable<Trie> st = (Serializable)t;
+                SerializableTrie st = (SerializableTrie)t;
                 st.serialize(new FileOutputStream(serial));
                 t = st.deserialize(new FileInputStream(serial));
             } catch (IOException e) {
@@ -164,6 +165,82 @@ public class CommonTrieTest {
             assertEquals(value, t.get(key));
         }
         // System.out.println(tt.toString());
+    }
+    
+    @Test
+    public void testGetLongestMatch() {
+      TernaryTriePrimitive ttp = new TernaryTriePrimitive();
+      ttp.put("Napoleon", 1);
+      ttp.put("First French Empire", 2);
+      ttp.put("Waterloo", 3);
+      ttp.put("Wellington", 4);
+      ttp.put("Blücher", 5);
+      ttp.put("Saint Helena", 6);
+      ttp.put("Invalides", 7);
+      
+      String text = "Napoleon was the emperor of the First French Empire . "
+          + "He was defeated at Waterloo by Wellington and Blücher . "
+          + "He was banned to Saint Helena , died of stomach cancer , "
+          + "and was buried at Invalides .";
+      String[] tokens = text.split(" ");
+      Match match = ttp.getLongestMatch(tokens, 0);
+      assertEquals(1, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 6);
+      assertEquals(3, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 7);
+      assertEquals(0, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 14);
+      assertEquals(1, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 16);
+      assertEquals(1, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 18);
+      assertEquals(1, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 24);
+      assertEquals(2, match.getTokenCount());
+      
+      match = ttp.getLongestMatch(tokens, 36);
+      assertEquals(1, match.getTokenCount());
+    }
+    
+    @Test
+    public void testGetAllMatches() {
+      TernaryTriePrimitive ttp = new TernaryTriePrimitive();
+      ttp.put("Napoleon", 1);
+      ttp.put("First French Empire", 2);
+      ttp.put("Waterloo", 3);
+      ttp.put("Wellington", 4);
+      ttp.put("Blücher", 5);
+      ttp.put("Saint Helena", 6);
+      ttp.put("Invalides", 7);
+      
+      String text = "Napoleon was the emperor of the First French Empire . "
+          + "He was defeated at Waterloo by Wellington and Blücher . "
+          + "He was banned to Saint Helena , died of stomach cancer , "
+          + "and was buried at Invalides .";
+      String[] tokens = text.split(" ");
+      Map<Integer,Integer> matches = ttp.getAllMatches(tokens);
+      
+      assertEquals(7, matches.size());
+      assertTrue(matches.containsKey(0));
+      assertEquals(1, (int) matches.get(0));
+      assertTrue(matches.containsKey(6));
+      assertEquals(3, (int) matches.get(6));
+      assertTrue(matches.containsKey(14));
+      assertEquals(1, (int) matches.get(14));
+      assertTrue(matches.containsKey(16));
+      assertEquals(1, (int) matches.get(16));      
+      assertTrue(matches.containsKey(18));
+      assertEquals(1, (int) matches.get(18));
+      assertTrue(matches.containsKey(24));
+      assertEquals(2, (int) matches.get(24));
+      assertTrue(matches.containsKey(36));
+      assertEquals(1, (int) matches.get(36));
     }
     
     private String getPrefixedString(String key) {

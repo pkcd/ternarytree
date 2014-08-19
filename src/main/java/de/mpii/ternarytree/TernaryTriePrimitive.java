@@ -9,36 +9,54 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
+public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
     private static final int FORMAT_VERSION = 1;
-  
-    private TCharList labels;
-    private TIntList nodes;
+      
+    private TCharList labels = new TCharArrayList();
+    private TIntList nodes = new TIntArrayList();
     private int root;
     private double threshold;
     private char delimiter;
+    
+    public TernaryTriePrimitive() {
+      this(1.0);
+    }
     
     public TernaryTriePrimitive(double t) {
         this(t, ' ');
     }
     
     public TernaryTriePrimitive(double t, char d) {
-        labels = new TCharArrayList();
-        nodes = new TIntArrayList();
         root = -1;
         threshold = t;
         delimiter = d;
     }
-    
-    public TernaryTriePrimitive(File trieFile) throws IOException {
-        this.deserialize(new FileInputStream(trieFile));
+        
+    /**
+     * Returns all matches found in the input tokens as a map in the form.
+     * tokenOffset -> tokenCount
+     * 
+     * @param tokens Tokenized text.
+     * @return Map of Matches: tokenOffset;tokenCount
+     */
+    public Map<Integer, Integer> getAllMatches(String[] tokens) {
+      Map<Integer, Integer> matches = new LinkedHashMap<Integer, Integer>();
+      for (int i = 0; i < tokens.length; ++i) {
+        Match m = getLongestMatch(tokens, i);
+        if (m.getTokenCount() > 0) {
+          matches.put(i, m.getTokenCount());
+          // Jump after longest match.
+          i += m.getTokenCount();
+        }
+      }
+      return matches;
     }
     
     public Match getLongestMatch(String[] tokens, int start) {
@@ -68,7 +86,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
                 //match delimiter
                 value = getNodeValue(node);
                 node = getEqualChild(node);
-                if (iToken < tokens.length - 1) {
+                if (node != -1 && iToken < tokens.length - 1) {
                     if (delimiter < getNodeKey(node)) {
                         node = getLessChild(node);
                     } else if(delimiter == getNodeKey(node)) {
@@ -79,7 +97,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
                 }
             }
         }
-        return new Match(start, iToken - start, value);
+        return new Match(iToken - start, value);
     }
     
     public int get(String[] tokens) {
@@ -206,6 +224,7 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         writer.writeInt(FORMAT_VERSION);
         writer.writeDouble(threshold);
         writer.writeChar(delimiter);
+        writer.writeInt(root);
         writer.writeInt(nodes.size());
         for (int i = 0; i < nodes.size(); i++) {
             writer.writeInt(nodes.get(i));
@@ -214,16 +233,18 @@ public class TernaryTriePrimitive implements Trie, Serializable<Trie>{
         for (int i = 0; i < labels.size(); i++) {
             writer.writeChar(labels.get(i));
         }
+        writer.flush();
         writer.close();
     }
 
     public Trie deserialize(InputStream stream) throws IOException {
-        DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));
+        DataInputStream reader = new DataInputStream(new BufferedInputStream(stream));        
         nodes.clear();
         labels.clear();
         reader.readInt(); //discard version
         threshold = reader.readDouble();
         delimiter = reader.readChar();
+        root = reader.readInt();
         int numNodes = reader.readInt();
         for (int i = 0; i < numNodes; i++) {
             nodes.add(reader.readInt());

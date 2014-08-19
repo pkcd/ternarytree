@@ -5,13 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * An interface to add serialization/deserialization capabilities to a data
- * structure.
+ * An interface to add serialization/deserialization capabilities to a tree.
  * 
- * @param <T>
- *            The type of object created after deserialzation.
  */
-public interface Serializable<T> {
+public interface SerializableTrie {
 
     /**
      * This method serializes the current state of the structure into an
@@ -33,6 +30,6 @@ public interface Serializable<T> {
      * @throws IOException
      *             If there is an error while reading from stream.
      */
-    public T deserialize(InputStream stream) throws IOException;
+    public Trie deserialize(InputStream stream) throws IOException;
 
 }

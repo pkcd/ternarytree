@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.cli.CommandLine;
@@ -21,17 +20,19 @@ import org.apache.commons.cli.PosixParser;
 public class App {
     public static void main(String[] args) throws ParseException {
         Options options = new Options();
-        options.addOption("i", "input", true, "Input aida means in gzip format");
+        options.addOption("i", "input", true, "UTF-8 file with one 'name<TAB>id' pair per line");
         options.addOption("o", "output", true, "Path to output serialized trie");
+        options.addOption("t", "threshold", true, "Threshold to use for truncating tokens to prefix");
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
         String inputPath = cmd.getOptionValue("i");
         String outputPath = cmd.getOptionValue("o");
-        TernaryTriePrimitive t = new TernaryTriePrimitive(1);
+        Double threshold = Double.parseDouble(cmd.getOptionValue("t", "1.0"));
+        TernaryTriePrimitive t = new TernaryTriePrimitive(threshold);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    new GZIPInputStream(Files.newInputStream(Paths
-                            .get(inputPath)))));
+                    Files.newInputStream(Paths
+                            .get(inputPath))));
             String line = null;
             int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
