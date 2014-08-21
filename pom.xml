@@ -58,6 +58,9 @@
 		</repository>
 	</distributionManagement>
 	<dependencies>
+
+
+
 		<dependency>
 			<groupId>net.sf.trove4j</groupId>
 			<artifactId>trove4j</artifactId>
@@ -78,5 +81,29 @@
 			<artifactId>snappy</artifactId>
 			<version>0.3</version>
 		</dependency>
+
+		<dependency>
+			<groupId>it.cnr.isti.hpc</groupId>
+			<artifactId>hpc-utils</artifactId>
+			<version>0.0.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>sux4j</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>fastutil</artifactId>
+			<version>6.5.14</version>
+		</dependency>
+
+
+
+
+
+
 	</dependencies>
 </project>
