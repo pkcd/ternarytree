@@ -99,11 +99,20 @@
 			<artifactId>fastutil</artifactId>
 			<version>6.5.14</version>
 		</dependency>
-
+		
+		
+		
 
 
 
 
 
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>diego's dropbox</id>
+			<url>https://dl.dropboxusercontent.com/u/4663256/mvn-repository/</url>
+		</repository>
+	</repositories>
 </project>
