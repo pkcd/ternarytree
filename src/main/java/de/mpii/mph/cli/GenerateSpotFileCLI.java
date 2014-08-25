@@ -11,6 +11,7 @@ import org.apache.commons.cli.PosixParser;
 
 import de.mpii.mph.RamSpotFile;
 import de.mpii.mph.SpotEliasFanoOffsets;
+import de.mpii.mph.SpotMinimalPerfectHash;
 
 /**
  * Main App!
@@ -19,17 +20,20 @@ import de.mpii.mph.SpotEliasFanoOffsets;
 public class GenerateSpotFileCLI {
 	public static void main(String[] args) throws ParseException {
 		Options options = new Options();
-		options.addOption("i", "input", true,
-				"UTF-8 file with one 'name<TAB>id' pair per line, sorted by id");
-		options.addOption("o", "output", true, "spotfile");
-		options.addOption("e", "eliasfano", true, "elias fano compressed index");
+
+		options.addOption("o", "output", true,
+				"minimal perfect hashing directory");
+
 		// options.addOption("t", "threshold", true,
 		// "Threshold to use for truncating tokens to prefix");
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse(options, args);
-		File inputPath = new File(cmd.getOptionValue("i"));
-		File outputPath = new File(cmd.getOptionValue("o"));
-		File efPath = new File(cmd.getOptionValue("e"));
+
+		File outputDir = new File(cmd.getOptionValue("o"));
+
+		File inputPath = new File(outputDir, SpotMinimalPerfectHash.STDSPOTNAME);
+		File outputPath = new File(outputDir, RamSpotFile.STDNAME);
+		File efPath = new File(outputDir, SpotEliasFanoOffsets.STDNAME);
 		File tmp = null;
 		try {
 			tmp = File.createTempFile("eliasfano-offset", ".txt");
@@ -38,7 +42,7 @@ public class GenerateSpotFileCLI {
 			e.printStackTrace();
 		}
 		tmp.deleteOnExit();
-
+		// inputPath.deleteOnExit();
 		RamSpotFile spotFile = new RamSpotFile();
 		spotFile.dumpSpotFile(inputPath, outputPath, tmp);
 		SpotEliasFanoOffsets offsets = new SpotEliasFanoOffsets()

@@ -39,6 +39,8 @@ public class SpotEliasFanoOffsets {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SpotEliasFanoOffsets.class);
 
+	public static final String STDNAME = "elias-fano-index.bin";
+
 	private EliasFanoMonotoneLongBigList ef = null;
 
 	public SpotEliasFanoOffsets load(File offsetsBinFile) {

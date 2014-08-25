@@ -17,20 +17,17 @@ import de.mpii.mph.RamSpotRepository;
 public class GetSpotKeyCLI {
 	public static void main(String[] args) throws ParseException {
 		Options options = new Options();
-		options.addOption("h", "mph", true, "the minimal perfect hashing file");
-		options.addOption("s", "spot", true, "spotfile");
-		options.addOption("e", "eliasfano", true, "elias fano compressed index");
+		options.addOption("i", "mph-dir", true,
+				"the minimal perfect hashing spotter dir");
 		options.addOption("q", "query", true, "spot");
 		// options.addOption("t", "threshold", true,
 		// "Threshold to use for truncating tokens to prefix");
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse(options, args);
-		File mphPath = new File(cmd.getOptionValue("h"));
-		File spotfilePath = new File(cmd.getOptionValue("s"));
-		File efPath = new File(cmd.getOptionValue("e"));
+
+		File dir = new File(cmd.getOptionValue("i"));
 		String query = cmd.getOptionValue("q");
-		RamSpotRepository repo = new RamSpotRepository(mphPath, efPath,
-				spotfilePath);
+		RamSpotRepository repo = new RamSpotRepository(dir);
 		System.out.println(query + ": " + repo.getId(query));
 
 	}

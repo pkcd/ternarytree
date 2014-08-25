@@ -44,6 +44,8 @@ public class RamSpotFile {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RamSpotFile.class);
 
+	public static final String STDNAME = "ram-spot-file.bin";
+
 	// MAX CHUNK SIZE (byte)
 	private static int CHUNK_SIZE = 100000000;
 

@@ -34,6 +34,16 @@ public class RamSpotRepository {
 	SpotMinimalPerfectHash hash;
 	SpotEliasFanoOffsets offsets;
 
+	public RamSpotRepository(File mphDir) {
+		hash = new SpotMinimalPerfectHash().load(new File(mphDir,
+				SpotMinimalPerfectHash.STDNAME));
+		offsets = new SpotEliasFanoOffsets().load(new File(mphDir,
+				SpotEliasFanoOffsets.STDNAME));
+		spots = new RamSpotFile().loadSpotFile(new File(mphDir,
+				RamSpotFile.STDNAME));
+
+	}
+
 	public RamSpotRepository(File mphFile, File efFile, File spotFile) {
 		hash = new SpotMinimalPerfectHash().load(mphFile);
 		offsets = new SpotEliasFanoOffsets().load(efFile);
@@ -44,7 +54,7 @@ public class RamSpotRepository {
 	public long getId(String spot) {
 
 		long index = hash.hash(spot);
-		System.out.println("hash(" + spot + ")=" + index);
+		// System.out.println("hash(" + spot + ")=" + index);
 		if (index < 0) {
 			return -1;
 		}
@@ -56,7 +66,7 @@ public class RamSpotRepository {
 		// logger.info("offsetEnd = {} ",to);
 		byte[] binspot = spots.getOffset(from, to);
 		String match = new String(binspot);
-		System.out.println("match =" + match);
+		// System.out.println("match =" + match);
 		if (match.equals(spot))
 			return index;
 		return -1;

@@ -40,6 +40,9 @@ public class SpotMinimalPerfectHash {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SpotMinimalPerfectHash.class);
 
+	public static final String STDNAME = "mph.bin";
+	public static final String STDSPOTNAME = "spot-mph.tsv";
+
 	private MinimalPerfectHashFunction<String> mph;
 
 	public long hash(String spot) {
@@ -63,6 +66,7 @@ public class SpotMinimalPerfectHash {
 	}
 
 	public void dumpSpotsAndHash(File spotFile, File output) {
+		logger.info("output spots in {}", output.getAbsolutePath());
 		SpotIterable iterator = new SpotIterable(spotFile);
 		BufferedWriter writer = IOUtils.getPlainOrCompressedUTF8Writer(output
 				.getAbsolutePath());
