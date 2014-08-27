@@ -1,7 +1,6 @@
 package de.mpii.ternarytree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -13,7 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 
 import org.junit.Before;
@@ -183,29 +182,29 @@ public class CommonTrieTest {
           + "He was banned to Saint Helena , died of stomach cancer , "
           + "and was buried at Invalides .";
       String[] tokens = text.split(" ");
-      Match match = ttp.getLongestMatch(tokens, 0);
-      assertEquals(1, match.getTokenCount());
+      Spot spot = ttp.getLongestMatch(tokens, 0);
+      assertEquals(1, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 6);
-      assertEquals(3, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 6);
+      assertEquals(3, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 7);
-      assertEquals(0, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 7);
+      assertEquals(0, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 14);
-      assertEquals(1, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 14);
+      assertEquals(1, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 16);
-      assertEquals(1, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 16);
+      assertEquals(1, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 18);
-      assertEquals(1, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 18);
+      assertEquals(1, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 24);
-      assertEquals(2, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 24);
+      assertEquals(2, spot.getTokenCount());
       
-      match = ttp.getLongestMatch(tokens, 36);
-      assertEquals(1, match.getTokenCount());
+      spot = ttp.getLongestMatch(tokens, 36);
+      assertEquals(1, spot.getTokenCount());
     }
     
     @Test
@@ -224,23 +223,24 @@ public class CommonTrieTest {
           + "He was banned to Saint Helena , died of stomach cancer , "
           + "and was buried at Invalides .";
       String[] tokens = text.split(" ");
-      Map<Integer,Integer> matches = ttp.getAllMatches(tokens);
+      List<Spot> matchedSpots = ttp.getAllMatches(tokens);
       
-      assertEquals(7, matches.size());
-      assertTrue(matches.containsKey(0));
-      assertEquals(1, (int) matches.get(0));
-      assertTrue(matches.containsKey(6));
-      assertEquals(3, (int) matches.get(6));
-      assertTrue(matches.containsKey(14));
-      assertEquals(1, (int) matches.get(14));
-      assertTrue(matches.containsKey(16));
-      assertEquals(1, (int) matches.get(16));      
-      assertTrue(matches.containsKey(18));
-      assertEquals(1, (int) matches.get(18));
-      assertTrue(matches.containsKey(24));
-      assertEquals(2, (int) matches.get(24));
-      assertTrue(matches.containsKey(36));
-      assertEquals(1, (int) matches.get(36));
+      assertEquals(7, matchedSpots.size());
+
+      // offset, count, value
+      assertEquals(new Spot(0, 1, 1) , matchedSpots.get(0));
+
+      assertEquals(new Spot(6, 3, 2), matchedSpots.get(1));
+      
+      assertEquals(new Spot(14, 1, 3), matchedSpots.get(2));
+      
+      assertEquals(new Spot(16, 1, 4), matchedSpots.get(3));
+
+      assertEquals(new Spot(18, 1, 5), matchedSpots.get(4));
+      
+      assertEquals(new Spot(24, 2, 6), matchedSpots.get(5));
+      
+      assertEquals(new Spot(36, 1, 7), matchedSpots.get(6));
     }
     
     private String getPrefixedString(String key) {
