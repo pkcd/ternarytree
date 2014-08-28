@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
@@ -39,6 +42,22 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         delimiter = d;
     }
         
+    public void bulkLoadTrie(Map<String, Integer> items) {
+        String[] mentions = items.keySet().toArray(new String[]{});
+        Arrays.sort(mentions);
+        //Randomly permute
+        Random r = new Random();
+        for(int i = mentions.length - 1; i > 0; i--) {
+            int randomIndex = r.nextInt(i);
+            String temp = mentions[i];
+            mentions[i] = mentions[randomIndex];
+            mentions[randomIndex] = temp;
+        }
+        for (String mention : mentions) {
+            this.put(mention, items.get(mention));
+        }
+    }
+    
     /**
      * Returns all matches found in the input tokens as a map in the form.
      * tokenOffset -> tokenCount
@@ -156,7 +175,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
     private int getLessChild(int node) {
         return nodes.get(node);
     }
-    
+       
     private int getEqualChild(int node) {
         return nodes.get(node + 1);
     }
