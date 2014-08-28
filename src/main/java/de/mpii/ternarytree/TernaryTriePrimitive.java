@@ -12,8 +12,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class TernaryTriePrimitive implements Trie, SerializableTrie {
   
@@ -39,27 +42,44 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
         delimiter = d;
     }
         
+    public void bulkLoadTrie(Map<String, Integer> items) {
+        String[] mentions = items.keySet().toArray(new String[]{});
+        Arrays.sort(mentions);
+        //Randomly permute
+        Random r = new Random();
+        for(int i = mentions.length - 1; i > 0; i--) {
+            int randomIndex = r.nextInt(i);
+            String temp = mentions[i];
+            mentions[i] = mentions[randomIndex];
+            mentions[randomIndex] = temp;
+        }
+        for (String mention : mentions) {
+            this.put(mention, items.get(mention));
+        }
+    }
+    
     /**
      * Returns all matches found in the input tokens as a map in the form.
      * tokenOffset -> tokenCount
      * 
-     * @param tokens Tokenized text.
-     * @return Map of Matches: tokenOffset;tokenCount
+     * @param tokens
+     *            Tokenized text.
+     * @return List of Matched SPots
      */
-    public Map<Integer, Integer> getAllMatches(String[] tokens) {
-      Map<Integer, Integer> matches = new LinkedHashMap<Integer, Integer>();
-      for (int i = 0; i < tokens.length; ++i) {
-        Match m = getLongestMatch(tokens, i);
-        if (m.getTokenCount() > 0) {
-          matches.put(i, m.getTokenCount());
-          // Jump after longest match.
-          i += m.getTokenCount();
+    public List<Spot> getAllMatches(String[] tokens) {
+        List<Spot> machedSpots = new ArrayList<Spot>();
+        for (int i = 0; i < tokens.length; ++i) {
+            Spot m = getLongestMatch(tokens, i);
+            if (m.getTokenCount() > 0) {
+                machedSpots.add(m);
+                // Jump after longest match.
+                i += m.getTokenCount();
+            }
         }
-      }
-      return matches;
+        return machedSpots;
     }
-    
-    public Match getLongestMatch(String[] tokens, int start) {
+
+    public Spot getLongestMatch(String[] tokens, int start) {
         int node = root;
         int value = -1;
         int iToken = start;
@@ -97,11 +117,11 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
                 }
             }
         }
-        return new Match(iToken - start, value);
+        return new Spot(start, iToken - start, value);
     }
     
     public int get(String[] tokens) {
-        Match match = this.getLongestMatch(tokens, 0);
+        Spot match = this.getLongestMatch(tokens, 0);
         if (match.getTokenCount() == tokens.length) {
             return match.getValue();
         } else {
@@ -155,7 +175,7 @@ public class TernaryTriePrimitive implements Trie, SerializableTrie {
     private int getLessChild(int node) {
         return nodes.get(node);
     }
-    
+       
     private int getEqualChild(int node) {
         return nodes.get(node + 1);
     }
